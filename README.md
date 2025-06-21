@@ -5,6 +5,7 @@ A comprehensive form management and workflow system built with Next.js, TypeScri
 ## Features
 
 ### 🏗️ Core Functionality
+
 - **Multi-tenant Form Management**: Create, edit, and manage forms with tenant isolation
 - **JSON-Based Form Schema**: Import forms using JSON schema definitions
 - **Workflow Engine**: Create and manage workflows with sequential form tasks
@@ -12,12 +13,14 @@ A comprehensive form management and workflow system built with Next.js, TypeScri
 - **Workflow Instances**: Start and track workflow instances through completion
 
 ### 🎯 Workflow Management
+
 - **Workflow Designer**: Visual workflow creation with form task sequencing
 - **Instance Tracking**: Monitor workflow progress and completion status
 - **Task Management**: Sequential form completion with validation
 - **Status Management**: Draft → Active → In Progress → Completed workflow states
 
 ### 🔧 Technical Features
+
 - **Type-Safe Database**: Full TypeScript integration with Drizzle ORM
 - **PostgreSQL Backend**: Robust relational database with JSONB support
 - **RESTful API**: Comprehensive API endpoints for all operations
@@ -34,6 +37,7 @@ A comprehensive form management and workflow system built with Next.js, TypeScri
 ## Database Schema
 
 ### Core Tables
+
 - `forms` - Form definitions with JSON schema
 - `form_submissions` - Form submission data
 - `workflows` - Workflow definitions and metadata
@@ -43,30 +47,35 @@ A comprehensive form management and workflow system built with Next.js, TypeScri
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - PostgreSQL 14+
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/kpapap/forms.git
 cd forms
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your database configuration
 ```
 
 4. Set up the database:
+
 ```bash
 # Generate initial migration
 npm run db:generate
@@ -76,6 +85,7 @@ npm run db:migrate
 ```
 
 5. (Optional) Set up sample data:
+
 ```bash
 node scripts/setup-sample-data.js
 ```
@@ -123,6 +133,7 @@ src/
 ## API Endpoints
 
 ### Forms
+
 - `GET /api/forms` - List all forms
 - `POST /api/forms` - Create new form
 - `GET /api/forms/[id]` - Get form by ID
@@ -132,6 +143,7 @@ src/
 - `GET /api/forms/[id]/submissions` - Get form submissions
 
 ### Workflows
+
 - `GET /api/workflows` - List all workflows
 - `POST /api/workflows` - Create new workflow
 - `GET /api/workflows/[id]` - Get workflow by ID
@@ -145,6 +157,7 @@ src/
 ## Usage Examples
 
 ### Creating a Form
+
 Forms are created by importing JSON schema:
 
 ```json
@@ -157,7 +170,7 @@ Forms are created by importing JSON schema:
       "label": "Full Name"
     },
     {
-      "id": "email", 
+      "id": "email",
       "type": "email",
       "label": "Email Address"
     }
@@ -166,6 +179,7 @@ Forms are created by importing JSON schema:
 ```
 
 ### Creating a Workflow
+
 1. Navigate to `/workflows`
 2. Click "Create New Workflow"
 3. Add form tasks in sequence
@@ -173,6 +187,7 @@ Forms are created by importing JSON schema:
 5. Activate workflow to enable instances
 
 ### Running a Workflow
+
 1. Go to workflow detail page
 2. Click "Start New Instance"
 3. Complete forms in sequence
