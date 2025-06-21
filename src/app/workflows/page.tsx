@@ -10,6 +10,7 @@ interface Workflow {
   status: string;
   createdAt: string;
   updatedAt: string;
+  // Removed BPMN-related fields
 }
 
 interface WorkflowInstance {
@@ -170,7 +171,12 @@ export default function WorkflowsPage() {
             >
               Back to Forms
             </Link>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <button
+              onClick={() =>
+                alert('Create workflow functionality is coming soon!')
+              }
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Create Workflow
             </button>
           </div>
@@ -227,7 +233,12 @@ export default function WorkflowsPage() {
                 <p className="text-gray-500 mb-4">
                   Create your first workflow to get started.
                 </p>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                <button
+                  onClick={() =>
+                    alert('Create workflow functionality is coming soon!')
+                  }
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
                   Create Workflow
                 </button>
               </div>
@@ -264,7 +275,7 @@ export default function WorkflowsPage() {
                         Created: {formatDate(workflow.createdAt)} • Updated:{' '}
                         {formatDate(workflow.updatedAt)}
                       </div>
-                    </div>
+                    </div>{' '}
                     <div className="flex gap-2 ml-4">
                       {workflow.status === 'active' && (
                         <button
