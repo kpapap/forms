@@ -30,9 +30,24 @@ interface WorkflowInstance {
 export default function WorkflowsPage() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [instances, setInstances] = useState<WorkflowInstance[]>([]);
-  const [activeTab, setActiveTab] = useState<'workflows' | 'instances'>(
-    'workflows'
-  );
+  const [completedInstances, setCompletedInstances] = useState<
+    WorkflowInstance[]
+  >([]);
+  const [activeTab, setActiveTab] = useState<
+    'workflows' | 'instances' | 'completed'
+  >('workflows');
+
+  const handleTabChange = (tab: 'workflows' | 'instances' | 'completed') => {
+    setActiveTab(tab);
+    // Refresh data when tab changes
+    if (tab === 'workflows') {
+      fetchWorkflows();
+    } else if (tab === 'instances') {
+      fetchInstances();
+    } else if (tab === 'completed') {
+      fetchCompletedInstances();
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +56,7 @@ export default function WorkflowsPage() {
   useEffect(() => {
     fetchWorkflows();
     fetchInstances();
+    fetchCompletedInstances();
   }, []);
 
   const fetchWorkflows = async () => {
@@ -66,10 +82,33 @@ export default function WorkflowsPage() {
       );
       if (response.ok) {
         const data = await response.json();
-        setInstances(data);
+        // Only include running instances
+        const activeInstances = data.filter(
+          (instance: WorkflowInstance) => instance.instance.status === 'running'
+        );
+        setInstances(activeInstances);
       }
     } catch (err) {
       console.error('Error fetching workflow instances:', err);
+    }
+  };
+
+  const fetchCompletedInstances = async () => {
+    try {
+      const response = await fetch(
+        `/api/workflows/instances?tenantId=${tenantId}&status=completed`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        // Filter for completed instances
+        const completed = data.filter(
+          (instance: WorkflowInstance) =>
+            instance.instance.status === 'completed'
+        );
+        setCompletedInstances(completed);
+      }
+    } catch (err) {
+      console.error('Error fetching completed workflow instances:', err);
     }
   };
 
@@ -146,7 +185,7 @@ export default function WorkflowsPage() {
         {/* Tab Navigation */}
         <div className="flex mb-6 border-b border-gray-200">
           <button
-            onClick={() => setActiveTab('workflows')}
+            onClick={() => handleTabChange('workflows')}
             className={`px-6 py-3 font-medium border-b-2 ${
               activeTab === 'workflows'
                 ? 'border-blue-500 text-blue-600'
@@ -156,7 +195,7 @@ export default function WorkflowsPage() {
             Workflows ({workflows.length})
           </button>
           <button
-            onClick={() => setActiveTab('instances')}
+            onClick={() => handleTabChange('instances')}
             className={`px-6 py-3 font-medium border-b-2 ${
               activeTab === 'instances'
                 ? 'border-blue-500 text-blue-600'
@@ -164,6 +203,16 @@ export default function WorkflowsPage() {
             }`}
           >
             Active Instances ({instances.length})
+          </button>
+          <button
+            onClick={() => handleTabChange('completed')}
+            className={`px-6 py-3 font-medium border-b-2 ${
+              activeTab === 'completed'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Completed Instances ({completedInstances.length})
           </button>
         </div>
 
@@ -306,6 +355,65 @@ export default function WorkflowsPage() {
                             Continue Task
                           </Link>
                         )}
+                      <Link
+                        href={`/workflows/instances/${item.instance.id}`}
+                        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Completed Instances Tab */}
+        {activeTab === 'completed' && (
+          <div className="space-y-4">
+            {completedInstances.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg border">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No completed instances
+                </h3>
+                <p className="text-gray-500">
+                  Completed workflow instances will appear here.
+                </p>
+              </div>
+            ) : (
+              completedInstances.map((item) => (
+                <div
+                  key={item.instance.id}
+                  className="bg-white p-6 rounded-lg border hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {item.workflow.name}
+                        </h3>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          {item.instance.status}
+                        </span>
+                      </div>
+                      {item.workflow.description && (
+                        <p className="text-gray-600 mb-2">
+                          {item.workflow.description}
+                        </p>
+                      )}
+                      <div className="text-sm text-gray-500 space-y-1">
+                        <div>
+                          Started: {formatDate(item.instance.startedAt)}
+                        </div>
+                        {item.instance.completedAt && (
+                          <div>
+                            Completed: {formatDate(item.instance.completedAt)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 ml-4">
                       <Link
                         href={`/workflows/instances/${item.instance.id}`}
                         className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"

@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const tenantId = url.searchParams.get('tenantId');
     const workflowId = url.searchParams.get('workflowId');
+    const status = url.searchParams.get('status');
 
     if (!tenantId) {
       return NextResponse.json(
@@ -30,6 +31,13 @@ export async function GET(request: NextRequest) {
       whereConditions = and(
         eq(workflowInstances.tenantId, tenantId),
         eq(workflowInstances.workflowId, workflowId)
+      )!;
+    }
+
+    if (status) {
+      whereConditions = and(
+        whereConditions,
+        eq(workflowInstances.status, status)
       )!;
     }
 
